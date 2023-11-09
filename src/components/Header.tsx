@@ -14,16 +14,7 @@ import Container from "./Container";
 import { useActions } from "../hooks/actions";
 import { socket } from "../hooks/socket";
 import { useAppDispatch, useAppSelector } from "../hooks/redux";
-import {
-  addFriend,
-  addMessage,
-  deleteFriend,
-  setFriends,
-} from "../store/slices/friendsSlice";
-import { userApi } from "../store/services/userService";
-import Toast from "./Toast";
 import { IMessage } from "../models/IMessage";
-import { editPeople, setPeoples } from "../store/slices/peoplesSlice";
 
 type TProps = {
   onlineUsers?: number;
@@ -35,9 +26,6 @@ const Header: React.FC<TProps> = ({ onlineUsers, theme }) => {
   const [menuActive, setMenuActive] = useState<boolean>(false);
   const [newMessages, setNewMessages] = useState<IMessage[]>([]);
   const token = localStorage.getItem("token");
-
-  const [getFriends] = userApi.useGetFriendsMutation();
-  const friends = useAppSelector((state) => state.friends.friends);
 
   // @ts-ignore
   const userRole = token ? jwt_decode(token).roles : "guest";
@@ -53,92 +41,18 @@ const Header: React.FC<TProps> = ({ onlineUsers, theme }) => {
   const logoutHandler = () => {
     logout();
     navigate("/");
-    dispatch(setPeoples([]));
-    dispatch(setFriends([]));
   };
 
   const navLinksList = [
     {
-      title: "Страны",
-      link: "/countries",
-    },
-    {
-      title: "Выставки",
-      link: "/show",
-    },
-    {
-      title: "Художники",
-      link: "/artists",
+      title: "Мероприятия",
+      link: "/events",
     },
     {
       title: "О нас",
       link: "/about",
     },
-    {
-      title: "Контакты",
-      link: "/contacts",
-    },
   ];
-
-  // функция на получение друзей
-  const getFriendsAndSave = () => {
-    getFriends(userId).then((res: any) => {
-      dispatch(setFriends(res.data));
-    });
-  };
-
-  // получение сообщения WebSocket
-  useEffect(() => {
-    socket.on("sendMessage", (message: any) => {
-      if (
-        message.friendId === userId ||
-        message.senderId === userId
-        // &&
-        // (message.friendId === friendId || message.senderId === friendId)
-      ) {
-        dispatch(addMessage(message));
-        if (message.senderId !== userId) {
-          setNewMessages((prev) => [...prev, message]);
-        }
-      }
-    });
-
-    return () => {
-      socket.off("sendMessage");
-    };
-  }, []);
-
-  // если нас добавили в друзья WebSocket
-  useEffect(() => {
-    // Обработка события "friendAdded" от сервера
-    socket.on("friendAdded", (updatedUsers) => {
-      if (updatedUsers.friendUser._id === userId) {
-        getFriendsAndSave();
-        dispatch(addFriend(updatedUsers.currentUser));
-      }
-    });
-
-    // Очистка обработчика события при размонтировании компонента
-    return () => {
-      socket.off("friendAdded");
-    };
-  }, []);
-
-  // если нас удалили из друзей WebSocket
-  useEffect(() => {
-    // Обработка события "friendAdded" от сервера
-    socket.on("friendRemoved", (updatedUsers) => {
-      if (updatedUsers.friendUser._id === userId) {
-        getFriendsAndSave();
-        dispatch(deleteFriend(updatedUsers.currentUser));
-      }
-    });
-
-    // Очистка обработчика события при размонтировании компонента
-    return () => {
-      socket.off("friendRemoved");
-    };
-  }, []);
 
   return (
     <>
@@ -150,11 +64,6 @@ const Header: React.FC<TProps> = ({ onlineUsers, theme }) => {
                 <NavLink to="/">
                   <img src={logoLight} alt="" />
                 </NavLink>
-                <div className="ml-5 flex items-center justify-center bg-accentOpacity rounded-full">
-                  <div className="px-2 text-[12px] text-accent">
-                    Онлайн: {onlineUsers}
-                  </div>
-                </div>
               </div>
               <nav className="text-white hidden sm:flex">
                 {navLinksList.map((item, index) => (
@@ -169,31 +78,9 @@ const Header: React.FC<TProps> = ({ onlineUsers, theme }) => {
               </nav>
               {token ? (
                 userRole === "admin" ? (
-                  <div className="flex items-center justify-center">
-                    <NavLink
-                      to="/peoples"
-                      className="mr-7 font-medium text-title"
-                    >
-                      <img src={peoplesLight} alt="Люди" />
-                    </NavLink>
-                    <NavLink to="/im" className="mr-7 font-medium text-title">
-                      <img src={messagesLight} alt="Мессенджер" />
-                    </NavLink>
-                    <NavLink to="/admin">
-                      <Button type="secondary" size="md" text={userLogin} />
-                    </NavLink>
-                  </div>
+                  null
                 ) : (
                   <div className="flex items-center justify-center">
-                    <NavLink
-                      to="/peoples"
-                      className="mr-7 font-medium text-title"
-                    >
-                      <img src={peoplesLight} alt="Люди" />
-                    </NavLink>
-                    <NavLink to="/im" className="mr-7 font-medium text-title">
-                      <img src={messagesLight} alt="Мессенджер" />
-                    </NavLink>
                     <div
                       className="relative min-w-[65px] flex justify-end"
                       onClick={() => setMenuActive(!menuActive)}
@@ -204,9 +91,6 @@ const Header: React.FC<TProps> = ({ onlineUsers, theme }) => {
                           menuActive ? "h-[64px]" : "h-0"
                         } transition-all absolute z-10 top-10 rounded-xl overflow-hidden w-auto`}
                       >
-                        <NavLink to={`/${userId}`}>
-                          <Button type="secondary" size="sm" text={"Профиль"} />
-                        </NavLink>
                         <div
                           onClick={logoutHandler}
                           className="px-2 py-1 text-redpal-400 cursor-pointer text-center"
@@ -229,11 +113,6 @@ const Header: React.FC<TProps> = ({ onlineUsers, theme }) => {
                 <NavLink to="/">
                   <img src={logoDark} alt="" />
                 </NavLink>
-                <div className="ml-5 flex items-center justify-center bg-accentOpacity rounded-full">
-                  <div className="px-2 text-[12px] text-accent">
-                    Онлайн: {onlineUsers}
-                  </div>
-                </div>
               </div>
               <nav className="hidden sm:flex">
                 {navLinksList.map((item, index) => (
@@ -248,31 +127,9 @@ const Header: React.FC<TProps> = ({ onlineUsers, theme }) => {
               </nav>
               {token ? (
                 userRole === "admin" ? (
-                  <div className="flex items-center justify-center">
-                    <NavLink
-                      to="/peoples"
-                      className="mr-7 font-medium text-title"
-                    >
-                      <img src={peoplesDark} alt="Люди" />
-                    </NavLink>
-                    <NavLink to="/im" className="mr-7 font-medium text-title">
-                      <img src={messagesDark} alt="Мессенджер" />
-                    </NavLink>
-                    <NavLink to="/admin">
-                      <Button type="accent" size="md" text={userLogin} />
-                    </NavLink>
-                  </div>
+                  null
                 ) : (
                   <div className="flex items-center justify-center">
-                    <NavLink
-                      to="/peoples"
-                      className="mr-7 font-medium text-title"
-                    >
-                      <img src={peoplesDark} alt="Люди" />
-                    </NavLink>
-                    <NavLink to="/im" className="mr-7 font-medium text-title">
-                      <img src={messagesDark} alt="Мессенджер" />
-                    </NavLink>
                     <div
                       className="relative"
                       onClick={() => setMenuActive(!menuActive)}
@@ -283,9 +140,6 @@ const Header: React.FC<TProps> = ({ onlineUsers, theme }) => {
                           menuActive ? "h-[67px]" : "h-0"
                         } transition-all absolute z-10 top-10 rounded-xl overflow-hidden w-auto`}
                       >
-                        <NavLink to={`/${userId}`}>
-                          <Button type="primary" size="sm" text={"Профиль"} />
-                        </NavLink>
                         <div
                           onClick={logoutHandler}
                           className="px-2 py-1 cursor-pointer text-center"
@@ -304,18 +158,6 @@ const Header: React.FC<TProps> = ({ onlineUsers, theme }) => {
             </div>
           ) : null}
         </Container>
-        <div className="hidden sm:block toaster absolute left-5 bottom-0 max-h-4/5 overflow-y-hidden">
-          {newMessages.length > 0 &&
-            newMessages.map((message) => (
-              <Toast
-                key={message._id}
-                id={message.senderId}
-                avatar={message.senderAvatar}
-                name={message.senderName}
-                message={message.text}
-              />
-            ))}
-        </div>
       </header>
     </>
   );

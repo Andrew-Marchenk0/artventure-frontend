@@ -27,31 +27,9 @@ const Card: React.FC<TProps> = ({
   // isLoading,
   // setCardPictureLoaded,
 }) => {
-  const [cardPictureLoaded, setCardPictureLoaded] = useState<boolean>(false);
+  const [cardPictureLoaded, setCardPictureLoaded] = useState<boolean>(true);
 
-  // отображение картинки после полной загрузки
-  useEffect(() => {
-    const image = new Image();
-    if (img.includes("/static")) {
-      image.src = `${img}`;
-    } else {
-      image.src = `${baseUrl}/${img}`;
-    }
-
-    const handleSetLoaded = () => {
-      if (setCardPictureLoaded) {
-        setCardPictureLoaded(true);
-      }
-    };
-
-    image.addEventListener("load", handleSetLoaded);
-
-    // размонтировка чтобы память не улетала
-    return () => {
-      image.removeEventListener("load", handleSetLoaded);
-    };
-  }, [img]);
-
+  
   return size === "lg" ? (
     cardPictureLoaded ? (
       <div className="relative group cursor-pointer w-[calc(50%-10px)] h-[310px] rounded-xl overflow-hidden">

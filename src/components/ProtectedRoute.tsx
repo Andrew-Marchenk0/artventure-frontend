@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import jwt_decode from "jwt-decode";
 import NotFoundPage from "../pages/notfound";
-import { userApi } from "../store/services/userService";
 
 type TProps = {
   notAuthSecure?: boolean;
@@ -25,11 +24,6 @@ const ProtectedRoute: React.FC<TProps> = ({
   const roleDlyaUmnika = token ? jwt_decode(token).roles : null;
 
   let data: any;
-
-  // получить user'а из db
-  if (userId) {
-    data = userApi.useGetUserByIdQuery(userId).data;
-  }
 
   useEffect(() => {
     if (data) {

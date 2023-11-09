@@ -35,7 +35,7 @@ const Login: React.FC<TProps> = ({ setTheme }) => {
     setTheme("hidden");
     if (data) {
       login(data);
-      navigate("/show");
+      navigate("/recomendations");
     }
   });
 
@@ -150,7 +150,7 @@ const Login: React.FC<TProps> = ({ setTheme }) => {
                         Зарегистрироваться
                       </NavLink>
                     </div>
-                    <div className="text-sm text-border">© Artvibe</div>
+                    <div className="text-sm text-border">© ArtVenture</div>
                   </div>
                 </div>
               </div>

@@ -42,7 +42,7 @@ const Footer: React.FC<TProps> = ({ theme }) => {
     <header className="mt-5 relative z-10">
       <Container>
         <div className="flex justify-between items-center px-3 py-1 rounded-full mx-auto mb-2 w-max text-accent bg-accentOpacity">
-          Artvibe © 2023
+          ArtVenture © 2023
         </div>
       </Container>
     </header>

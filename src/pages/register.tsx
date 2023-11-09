@@ -42,7 +42,7 @@ const Register: React.FC<TProps> = ({ setTheme }) => {
     setTheme("hidden");
     if (data) {
       register(data);
-      navigate("/show");
+      navigate("/recomendations");
     }
   });
 
@@ -217,7 +217,7 @@ const Register: React.FC<TProps> = ({ setTheme }) => {
                         Войти
                       </NavLink>
                     </div>
-                    <div className="text-sm text-border">© Artvibe</div>
+                    <div className="text-sm text-border">© ArtVenture</div>
                   </div>
                 </div>
               </div>

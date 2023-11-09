@@ -21,35 +21,37 @@ type TProps = {
 };
 
 const Start: React.FC<TProps> = ({ setTheme }) => {
+  const isAuth = localStorage.getItem("token") ? true : false;
+
   useEffect(() => {
     moment.locale("en");
     setTheme("light");
   }, []);
 
   const tags = [
-    "Threads",
-    "Direct Messages",
-    "Profile customization",
-    "Friends",
-    "Communities",
-    "Calls",
-    "Music playlists",
-    "Videos",
+    "Спектакли",
+    "Архитектура",
+    "История",
+    "Кинематограф",
+    "Знакомства",
+    "Музыка",
+    "Концерты",
+    "Живопись",
   ];
 
   let message1 = {
     // text: "What’s up! Let me take a look what happened at party",
-    text: "Приветик! Расскажи что произошло вчера не вечеринке.",
+    text: "Привет! Как тебе вчерашний концерт?",
     time: "6:30 PM",
-    name: "Mark",
+    name: "Иван",
     avatar: avatar1,
   };
 
   let message2 = {
     // text: "Hi! A party was awesome. Sent a couple of pictures from it.",
-    text: "Привет! Вчерашняя вечеринка была классной. Пришли мне пару фоток.",
+    text: "Было очень круто, мне очень понравилось!",
     time: "8:00 AM",
-    name: "Alex",
+    name: "Александр",
     avatar: avatar2,
   };
 
@@ -64,8 +66,8 @@ const Start: React.FC<TProps> = ({ setTheme }) => {
             {/* text  */}
             <div className="w-full sm:w-[50%]">
               <div className="relative text-xl text-accent flex items-center mb-4">
-                <span className="font-bold text-center mx-auto sm:mx-0 sm:text-left ">
-                  ARTVIBE
+                <span className="font-bold uppercase text-center mx-auto sm:mx-0 sm:text-left ">
+                ArtVenture
                 </span>
                 <svg
                   className="hidden sm:block stroke-accent ml-2"
@@ -88,22 +90,20 @@ const Start: React.FC<TProps> = ({ setTheme }) => {
                 <div className="absolute -top-5 -left-[30%] -z-10 w-[380px] h-[380px] bg-accent rounded-full blur-[75px] opacity-20"></div>
               </div>
               <div className="relative">
-                <h1 className="text-center sm:text-left start-title w-[100%] pb-1 bg-gradient-to-l from-[#635BFF] to-[#CAC8FF] text-[46px] sm:text-[64px] leading-[1.02] font-bold">
-                  {/* Meet the next generation social network */}
-                  Встречайте социальную сеть нового поколения
+                <h1 className="text-center sm:text-left start-title w-[100%] pb-1 bg-gradient-to-l from-[#635BFF] to-[#CAC8FF] text-[36px] sm:text-[48px] leading-[1.02] font-bold">
+                  ArtVenture - для любителей культуры
                 </h1>
                 <div className="absolute -top-5 -right-5 -z-10 w-[220px] h-[220px] bg-accent rounded-full blur-[75px] opacity-20"></div>
               </div>
               <p className="my-6 opacity-80 text-lg">
-                {/* Whether you're a painter, musician, writer, or any other kind of
-                creative soul, you'll find a home here. Our platform is designed
-                to foster genuine connections and support your artistic journey. */}
-                Кем бы вы не были: художником, музыкантом, писателем или любым другим творческим деятелем, вы найдете что-то интересное для себя на нашей платформе
+                Каждое мероприятий представляет широкий спектр художественных
+                произведений, включая живопись, кинематограф, архитектуру и
+                многое другое
               </p>
               <div className="flex my-2 flex-wrap select-none">
                 <div className="start-tag mr-2">
                   <span className="font-medium px-3 py-1 text-sm rounded-full bg-gradient-to-r from-[#D9565640] via-[#AC55BA40] to-[#0778E040]">
-                    AI Assisted
+                    Эспозиция
                   </span>
                 </div>
                 {tags.map((tag, index) => (
@@ -115,9 +115,9 @@ const Start: React.FC<TProps> = ({ setTheme }) => {
                 ))}
               </div>
               <div className="mt-16 w-max mx-auto sm:mx-0 flex flex-col sm:flex-row">
-                <NavLink className="relative z-20" to={"/login"}>
+                <NavLink className="relative z-20" to={"/events"}>
                   <div className="group mr-5 mb-3 sm:mb-0 w-max px-5 py-1 flex items-center rounded-full bg-gradient-to-l from-[#635BFF] to-[#b9b6ff]">
-                    <span className="font-medium mr-1">Начать</span>
+                    <span className="font-medium mr-1">Начнем вместе</span>
                     <svg
                       className="group-hover:ml-1 group-hover:rotate-45 transition-all"
                       xmlns="http://www.w3.org/2000/svg"
@@ -139,11 +139,13 @@ const Start: React.FC<TProps> = ({ setTheme }) => {
                     </svg>
                   </div>
                 </NavLink>
-                <NavLink className="relative z-20" to={"/show"}>
-                  <div className="w-max px-5 py-[2px] flex items-center rounded-full border-2 border-[#ffffff00] hover:border-white transition-colors">
-                    <span className="font-medium">Заглянуть в музей</span>
-                  </div>
-                </NavLink>
+                {!isAuth && (
+                  <NavLink className="relative z-20" to={"/register"}>
+                    <div className="w-max px-5 py-[2px] flex items-center rounded-full border-2 border-[#ffffff00] hover:border-white transition-colors">
+                      <span className="font-medium">Зарегистрироваться</span>
+                    </div>
+                  </NavLink>
+                )}
               </div>
             </div>
             {/* pictures  */}
@@ -248,29 +250,6 @@ const Start: React.FC<TProps> = ({ setTheme }) => {
                   className="absolute -z-10 -bottom-16 right-20"
                   alt=""
                 />
-              </div>
-              {/* features */}
-              <div className="relative select-none -z-30 w-max mt-32 mx-auto pb-3 pt-4 px-7 bg-darkBlueGray rounded-full rounded-tl-none">
-                <div className="z-10 absolute text-[12px] font-bold top-[-14px] left-[-10px] border-[3px] bg-darkBackground rounded-xl border-darkBackground text-accent py-0 px-3">
-                  Advanced tools
-                </div>
-                <div className="flex items-center">
-                  <div className="mr-8">
-                    <img src={tool1} alt="" />
-                  </div>
-                  <div className="mr-8">
-                    <img src={tool2} alt="" />
-                  </div>
-                  <div className="mr-8">
-                    <img src={tool3} alt="" />
-                  </div>
-                  <div className="mr-8">
-                    <img src={tool4} alt="" />
-                  </div>
-                  <div className="">
-                    <img src={tool5} alt="" />
-                  </div>
-                </div>
               </div>
               <div className="absolute -top-5 left-5 -z-20 w-[400px] h-[400px] bg-accent rounded-full blur-3xl opacity-20"></div>
             </div>
